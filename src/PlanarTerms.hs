@@ -87,9 +87,14 @@ termToFOL xs =  snd $ go ['a'..'z'] [] [] xs
         go ns cxt tms os = error $ show (ns, cxt, tms, os)
 
 showFOL :: FOL -> String
-showFOL (Bind s x) = "\\"++s++"."++showFOL x
+showFOL (Bind s x) = "λ"++s++"."++showFOL x
 showFOL (App x y) = "("++showFOL x ++ ")(" ++ showFOL y ++ ")"
 showFOL (Var s) = s
+
+boringLambda :: String -> String
+boringLambda = map go
+ where go 'λ' = '\\'
+       go x = x
 
 folToGraph = uncurry mkGraph . stripSelfLoop . fst . folToGraphData
 
@@ -167,7 +172,7 @@ emitSvg tm name = do
                      (\_ p1 _ p2 _ p -> arrowBetween' (opts p) p1 p2)
                      gr
       opts p = with & gaps .~ 22 & arrowShaft .~ (unLoc . head $ pathTrails p)
-      labeledDia = vsep 2 [text' 10 (showFOL . termToFOL $ tm), dia]
+      labeledDia = vsep 2 [text' 10 (boringLambda . showFOL . termToFOL $ tm), dia]
 
   renderSVG (name ++ ".svg") (mkWidth 250) labeledDia
 
