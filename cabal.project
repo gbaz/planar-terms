@@ -1,0 +1,7 @@
+packages: ./*.cabal
+
+-- Uncomment to allow picking up extra local unpacked deps:
+optional-packages: */
+
+allow-newer:
+    diagrams-graphviz:base, diagrams-graphviz:fgl
